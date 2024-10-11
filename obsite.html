@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Tyler Reimer">
+    <title>IT Onboarding</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .container { width: 90%; max-width: 1200px; margin: 0 auto; }
+        textarea { width: 100%; height: 150px; margin-bottom: 20px; }
+        .output { border: 1px solid #ddd; padding: 15px; margin-top: 20px; }
+        button { padding: 10px 20px; cursor: pointer; }
+        .copy-btn { margin-top: 10px; }
+
+           /* Define CSS variables for light and dark mode colors */
+           :root {
+            --bg-color: #333; /* Dark mode background color */
+            --text-color: #e0e0e0; /* Dark mode text color */
+            --border-color: #444; /* Dark mode border color */
+            --output-bg: #222; /* Background color for output boxes */
+            --button-bg: #444; /* Button background */
+            --button-text: #e0e0e0; /* Button text */
+        }
+
+        /* Light mode variables */
+        .light-mode {
+            --bg-color: #f5f5f5;
+            --text-color: #333;
+            --border-color: #ddd;
+            --output-bg: #fff;
+            --button-bg: #ddd;
+            --button-text: #333;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 20px;
+            background-color: var(--output-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 10px;
+        }
+
+        .output {
+            border: 1px solid var(--border-color);
+            background-color: var(--output-bg);
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--border-color);
+        }
+
+        .copy-btn {
+            margin-top: 10px;
+        }
+
+        .theme-toggle {
+            margin-bottom: 20px;
+        }
+    </style>
+    <!-- link to dfh favicon -->
+    <link rel="shortcut icon" href="dfhfavicon.png">
+</head>
+<body>
+    <div class="container">
+        <h1>IT Onboarding</h1>
+        <button class="theme-toggle" onclick="toggleTheme()">Switch to Light Mode</button><br>
+        <!-- Input for onboarding text -->
+            <label for="input_text">Paste the unformatted text here:</label><br>
+        <textarea id="input_text" placeholder="Enter the onboarding bullets Name through Start Date"></textarea><br>
+        <!-- Input for password -->
+            <label for="user_password">Enter Password:</label><br>
+        <input type="password" id="user_password" placeholder="TempP@ssw0rd!" style="width: 300px; margin-bottom: 20px;"><br>
+
+        <button onclick="generateScripts()">Generate Scripts</button>
+
+        <div class="output" id="powershell_output" style="display:none;">
+            <h2>Generated PowerShell Script:</h2>
+            <pre id="powershell_script"></pre>
+            <button class="copy-btn" onclick="copyToClipboard('powershell_script')">Copy PowerShell Script</button>
+        </div>
+            <!-- sets not to diplay until updated by JS after the scripts run-->
+        <div class="output" id="form_output" style="display:none;">
+            <h2>AuditMacs Form:</h2>
+            <pre id="audit_macs"></pre>
+            <button class="copy-btn" onclick="copyToClipboard('audit_macs')">Copy AuditMacsForm</button>
+        </div>
+    </div>
+
+    <script>
+    //DARK MODE
+         // pull local storage for theme preference
+         const currentTheme = localStorage.getItem("theme") || "dark";
+        document.body.classList.toggle("light-mode", currentTheme === "light");
+
+        // update button text based on the initial theme
+        const themeToggleButton = document.querySelector(".theme-toggle");
+        themeToggleButton.textContent = currentTheme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode";
+
+        function toggleTheme() {
+            // actual toggle
+            document.body.classList.toggle("light-mode");
+            const isLightMode = document.body.classList.contains("light-mode");
+
+            // update the button text accordingly
+            themeToggleButton.textContent = isLightMode ? "Switch to Dark Mode" : "Switch to Light Mode";
+
+            // save the theme preference in local storage
+            localStorage.setItem("theme", isLightMode ? "light" : "dark");
+        }
+        //TEXT PARSING
+        function generateScripts() {
+            //captures the input_text from the text box and allows JS to read it
+            const inputText = document.getElementById("input_text").value.trim();
+            //captures the user_password and passes it to JS
+            const user_password = document.getElementById("user_password").value.trim();
+
+            // Split input text into lines and extract key details
+            const lines = inputText.split('\n').map(line => line.trim()).filter(line => line);
+            if (lines.length < 6) {
+                alert("Please enter complete user information.");
+                return;
+            }
+
+            // Extract relevant fields from the unformatted text and input in an array
+            /*
+            const user_data = {
+            "Name": lines[0].split(":")[1].trim(),
+            "Title": lines[1].split(":")[1].trim(),
+            "Phone": lines[2].split(":")[1].trim(),
+            "Location": lines[3].split(":")[1].trim(),
+            "Hiring Manager": lines[4].split(":")[1].trim(),
+            "Start Date": lines[5].split(":")[1].trim()        };
+            */
+            //added splits to remove commas from orignal line that were improperly formatting final results
+            const user_data = {
+            "Name": lines[0].split(":")[1].trim().replace(/,$/, ""),
+            "Title": lines[1].split(":")[1].trim().replace(/,$/, ""),
+            "Phone": lines[2].split(":")[1].trim().replace(/,$/, ""),
+            "Location": lines[3].split(":")[1].trim().replace(/,$/, ""),
+            "Hiring Manager": lines[4].split(":")[1].trim().replace(/,$/, ""),
+            "Start Date": lines[5].split(":")[1].trim().replace(/,$/, "")
+        };
+
+            // Split name into first and last name
+            const [firstName, lastName] = user_data["Name"].split(" ");
+            // create a variable for thier email address 
+            const emailAddress = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@dreamfindershomes.com`;
+
+            // Generate PowerShell script
+            const powershellScript = `
+New-ADUser \`
+    -Name "${user_data['Name']}" \`
+    -GivenName "${firstName}" \`
+    -Surname "${lastName}" \`
+    -DisplayName "${user_data['Name']}" \`
+    -UserPrincipalName "${emailAddress}" \`
+    -Description "${user_data['Title']}" \`
+    -HomeDirectory "\\\\dfh-fs0\\home$\\${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
+    -HomeDrive "H:" \`
+    -Path "OU=${user_data['Location']},OU=Dream Finders Users,DC=dreamfinders,DC=local" \`
+    -Enabled $true \`
+    -AccountPassword (ConvertTo-SecureString "${user_password}" -AsPlainText -Force) \`
+    -PasswordNeverExpires $true \`
+    -ChangePasswordAtLogon $false \`
+    \` ;
+Set-ADUser \`
+    -Identity "${user_data['Name']}" \`
+    -Add @{ProxyAddresses="SMTP:${emailAddress}"} \`
+    -EmailAddress "${emailAddress}" \`
+    -SamAccountName "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
+    -Office "${user_data['Location']}" \` ;
+
+Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" 
+
+            `.trim();
+
+            // Generate AuditMacs Form
+            const AuditMacsForm = `
+Item Requested For: DFH
+
+Division: ${user_data['Location']}
+
+Name: ${user_data['Name']}
+Email: ${emailAddress}
+Email License: 
+
+Street Address: ATTN: ${user_data['Hiring Manager']}
+City: 
+State: 
+Zip: 
+
+Phone: ${user_data['Phone']}
+DFH Ticket Number: 
+
+Request type: Onboarding
+Device Requested: Laptop
+Date Needed: ${user_data['Start Date']}
+
+Credentials:
+Email
+Username: ${emailAddress}
+PC/Citrix
+Username: ${firstName.toLowerCase()}.${lastName.toLowerCase()}
+NSS/NSS Proto/NSE
+Username: ${firstName.charAt(0).toLowerCase()}${lastName.toLowerCase()}
+Lasso
+Username: ${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}
+Password: ${user_password}
+
+            `.trim();
+
+            // Display the results by changing style to block, making outputs seen by the user
+            document.getElementById("powershell_output").style.display = "block";
+            document.getElementById("form_output").style.display = "block";
+            document.getElementById("powershell_script").textContent = powershellScript;
+            document.getElementById("audit_macs").textContent = AuditMacsForm;
+        }
+        //COPY BUTTONS
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Copied to clipboard!");
+            }, err => {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
