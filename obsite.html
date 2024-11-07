@@ -88,13 +88,7 @@
         <button class="theme-toggle" onclick="toggleTheme()">Switch to Light Mode</button><br>
         <!-- Input for onboarding text -->
             <label for="input_text">Paste the unformatted text here:</label><br>
-        <textarea id="input_text" 
-            placeholder="•             Name: Joe Smith
-            •             Title: Astronaut Firefighter
-            •             Phone #: (123) 456-7890
-            •             Location/Division: Themoon
-            •             Hiring Manager: Bob Smith
-            •             Start Date: 03/14/2024"></textarea><br>
+        <textarea id="input_text" placeholder="Enter the onboarding bullets Name through Start Date"></textarea><br>
         <!-- Input for password -->
             <label for="user_password">Enter Password:</label><br>
         <input type="password" id="user_password" placeholder="TempP@ssw0rd!" style="width: 300px; margin-bottom: 20px;"><br>
@@ -158,15 +152,28 @@
             "Location": lines[3].split(":")[1].trim(),
             "Hiring Manager": lines[4].split(":")[1].trim(),
             "Start Date": lines[5].split(":")[1].trim()        };
-            */
-            //added splits to remove commas from orignal line that were improperly formatting final results
-            const user_data = {
-            "Name": lines[0].split(":")[1].trim().replace(/,$/, ""),
+
+              "Name": lines[0].split(":")[1].trim().replace(/,$/, ""),
             "Title": lines[1].split(":")[1].trim().replace(/,$/, ""),
             "Phone": lines[2].split(":")[1].trim().replace(/,$/, ""),
             "Location": lines[3].split(":")[1].trim().replace(/,$/, ""),
             "Hiring Manager": lines[4].split(":")[1].trim().replace(/,$/, ""),
             "Start Date": lines[5].split(":")[1].trim().replace(/,$/, "")
+            */
+            //added splits to remove commas from orignal line that were improperly formatting final results
+            const user_data = {
+          
+
+            "Name": lines[0].split(":")[1].trim().replace(/,$/, ""),
+            "Phone": lines[1].split(":")[1].trim().replace(/,$/, ""),
+            "Title": lines[2].split(":")[1].trim().replace(/,$/, ""),
+            "Hiring Manager": lines[3].split(":")[1].trim().replace(/,$/, ""),
+            "Department": lines[4].split(":")[1].trim().replace(/,$/, ""),
+            "Equipment": lines[5].split(":")[1].trim().replace(/,$/, ""),
+            "Operator": lines[6].split(":")[1].trim().replace(/,$/, ""),
+            "Location": lines[7].split(":")[1].trim().replace(/,$/, ""),
+            "Start Date": lines[8].split(":")[1].trim().replace(/,$/, ""),
+            "ID": lines[9].split(":")[1].trim().replace(/,$/, "")
         };
 
             // Split name into first and last name
