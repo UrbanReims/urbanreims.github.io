@@ -220,10 +220,8 @@ Name: ${user_data['Name']}
 Email: ${emailAddress}
 Email License: 
 
-Street Address: ATTN: ${user_data['Hiring Manager']}
-City: 
-State: 
-Zip: 
+ATTN: ${user_data['Hiring Manager']}
+ADDRESS
 
 Phone: ${user_data['Phone']}
 DFH Ticket Number: 
@@ -241,6 +239,7 @@ NSS/NSS Proto/NSE
 Username: ${firstName.charAt(0).toLowerCase()}${lastName.toLowerCase()}
 Lasso
 Username: ${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}
+
 Password: ${user_password}
 
             `.trim();
