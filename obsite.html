@@ -161,16 +161,7 @@
                 alert("Please enter complete user information.");
                 return;
             }
-            // Determine which group is selected
-            const groupOption = document.querySelector('input[name="group_option"]:checked');
-                if (!groupOption) {
-                    alert("Please select a group option.");
-                    return;
-                    }
-            //Add the command to the ps script
-            const groupMembershipCommand = `Add-ADGroupMember -Identity "${groupOption.value}" -Member "${firstName.toLowerCase()}.${lastName.toLowerCase()}"`;
-
-            //
+            
             
             //added splits to remove commas from orignal line that were improperly formatting final results
             const user_data = {
@@ -193,7 +184,15 @@
             const [firstName, lastName] = user_data["Name"].split(" ");
             // create a variable for thier email address 
             const emailAddress = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@dreamfindershomes.com`;
-
+            
+            // Determine which group is selected
+            const groupOption = document.querySelector('input[name="group_option"]:checked');
+                            if (!groupOption) {
+                                alert("Please select a group option.");
+                                return;
+                                }
+            //Add the command to the ps script
+            const groupMembershipCommand = `Add-ADGroupMember -Identity "${groupOption.value}" -Member "${firstName.toLowerCase()}.${lastName.toLowerCase()}"`;
             // Generate PowerShell script
             const powershellScript = `
 New-ADUser \`
