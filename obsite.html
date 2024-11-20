@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.03</title>
+    <title>IT Onboarding v0.04</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -184,7 +184,7 @@
             const [firstName, lastName] = user_data["Name"].split(" ");
             // create a variable for thier email address 
             const emailAddress = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@dreamfindershomes.com`;
-            
+
             // Determine which group is selected
             const groupOption = document.querySelector('input[name="group_option"]:checked');
                             if (!groupOption) {
