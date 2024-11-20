@@ -192,7 +192,7 @@
                                 return;
                                 }
             //Add the command to the ps script
-            const groupMembershipCommand = `Add-ADGroupMember -Identity "${groupOption.value}" -Member "${firstName.toLowerCase()}.${lastName.toLowerCase()}"`;
+            const groupMembershipCommand = `Add-ADGroupMember -Identity "${groupOption.value}" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"`;
             // Generate PowerShell script
             const powershellScript = `
 New-ADUser \`
