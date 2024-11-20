@@ -103,6 +103,14 @@
         <!-- Input for password -->
             <label for="user_password">Enter Password:</label><br>
         <input type="password" id="user_password" placeholder="TempP@ssw0rd!" style="width: 300px; margin-bottom: 20px;"><br>
+        <div>
+            <label>Select Group:</label><br>
+            <input type="radio" id="group_e1" name="group_option" value="O365_E1_Users">
+            <label for="group_e1">O365_E1_Users</label><br>
+            <input type="radio" id="group_e3" name="group_option" value="O365_E3_Users">
+            <label for="group_e3">O365_E3_Users</label>
+        </div>
+        <br>        
 
         <button onclick="generateScripts()">Generate Scripts</button>
 
@@ -153,24 +161,17 @@
                 alert("Please enter complete user information.");
                 return;
             }
+            // Determine which group is selected
+            const groupOption = document.querySelector('input[name="group_option"]:checked');
+                if (!groupOption) {
+                    alert("Please select a group option.");
+                    return;
+                    }
+            //Add the command to the ps script
+            const groupMembershipCommand = `Add-ADGroupMember -Identity "${groupOption.value}" -Member "${firstName.toLowerCase()}.${lastName.toLowerCase()}"`;
 
-            // Extract relevant fields from the unformatted text and input in an array
-            /*
-            const user_data = {
-            "Name": lines[0].split(":")[1].trim(),
-            "Title": lines[1].split(":")[1].trim(),
-            "Phone": lines[2].split(":")[1].trim(),
-            "Location": lines[3].split(":")[1].trim(),
-            "Hiring Manager": lines[4].split(":")[1].trim(),
-            "Start Date": lines[5].split(":")[1].trim()        };
-
-              "Name": lines[0].split(":")[1].trim().replace(/,$/, ""),
-            "Title": lines[1].split(":")[1].trim().replace(/,$/, ""),
-            "Phone": lines[2].split(":")[1].trim().replace(/,$/, ""),
-            "Location": lines[3].split(":")[1].trim().replace(/,$/, ""),
-            "Hiring Manager": lines[4].split(":")[1].trim().replace(/,$/, ""),
-            "Start Date": lines[5].split(":")[1].trim().replace(/,$/, "")
-            */
+            //
+            
             //added splits to remove commas from orignal line that were improperly formatting final results
             const user_data = {
           
@@ -217,8 +218,11 @@ Set-ADUser \`
     -SamAccountName "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
     -Office "${user_data['Location']}" \` ;
 
-Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" 
+Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
+Add-ADGroupMember -Identity "Citrix-CachedDesktop" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
+Add-ADGroupMember -Identity "Arctic Wolf Members" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
 
+${groupMembershipCommand}
             `.trim();
 
             // Generate AuditMacs Form
