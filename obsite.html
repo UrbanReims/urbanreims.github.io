@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.08</title>
+    <title>IT Onboarding v0.09</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -191,8 +191,19 @@
                                 alert("Please select a group option.");
                                 return;
                                 }
+            
+            // Extract the license type from the selected group (either "E1" or "E5")
+            let emailLicense = "";
+            
+            if (groupOption.value === "O365_E1_Users") {
+                emailLicense = "E1";
+            } else if (groupOption.value === "365 Lic-E5 Users") {
+                emailLicense = "E5";
+            }
+
             //Add the command to the ps script
             const groupMembershipCommand = `Add-ADGroupMember -Identity "${groupOption.value}" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"`;
+
             // Generate PowerShell script
             const powershellScript = `
 New-ADUser \`
@@ -269,7 +280,7 @@ Division: ${cityCode} ${location}
 
 Name: ${user_data['Name']}
 Email: ${emailAddress}
-Email License: 
+Email License: ${emailLicense}
 
 ATTN: ${user_data['Hiring Manager']}
 ADDRESS
