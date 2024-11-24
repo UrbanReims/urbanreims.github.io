@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.06</title>
+    <title>IT Onboarding v0.07</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -224,11 +224,31 @@ Add-ADGroupMember -Identity "Arctic Wolf Members" -Members "${firstName.toLowerC
 ${groupMembershipCommand}
             `.trim();
 
-            // Generate AuditMacs Form
+            // City Code Mapping
+                const cityCodeMap = {
+                        "Jacksonville": "JAX01",
+                        "Dallas": "DAL02",
+                        "Charleston": "CHS03",
+                        "New York": "NYC04",
+                        "Atlanta": "ATL05",
+                        "Los Angeles": "LA06",
+                        "Chicago": "CHI07",
+                        "Houston": "HOU08",
+                        "San Francisco": "SF09",
+                        "Miami": "MIA10",
+                        "Denver": "DEN11",
+                        // Add additional cities as needed
+                    };
+
+        // Get the city code based on location
+            const location = user_data["Location"];
+            let cityCode = cityCodeMap[location] || "UNKNOWN"; // Default to "UNKNOWN" if the city is not found
+
+        // Generate AuditMacs Form
             const AuditMacsForm = `
 Item Requested For: DFH
 
-Division: ${user_data['Location']}
+Division: ${location}
 
 Name: ${user_data['Name']}
 Email: ${emailAddress}
