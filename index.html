@@ -162,7 +162,9 @@
 					</header>
 					<div class="row">
 						<div class="col-12">
-							<form method="post" action="#">
+							<form method="post" action="https://api.web3forms.com/submit">
+								<input type="hidden" name="access_key" value="2fe9edf8-81c1-4d0f-82b7-eed3514712f2">
+								<input type="hidden" name="subject" value="New Submission from Web3Forms">
 								<div class="row">
 									<div class="col-6 col-12-small">
 										<input type="text" name="name" id="name" placeholder="Name" />
@@ -171,11 +173,9 @@
 										<input type="text" name="email" id="email" placeholder="Email" />
 									</div>
 									<div class="col-12">
-										<input type="text" name="subject" id="subject" placeholder="Subject" />
-									</div>
-									<div class="col-12">
 										<textarea name="message" id="message" placeholder="Message"></textarea>
 									</div>
+										 <input type="checkbox" name="botcheck" id="" style="display: none;">
 									<div class="col-12">
 										<ul class="actions">
 											<li><input type="submit" value="Send Message" /></li>
