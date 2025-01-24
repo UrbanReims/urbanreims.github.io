@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.11</title>
+    <title>IT Onboarding v0.12</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -209,32 +209,31 @@
 
             // Generate PowerShell script
             const powershellScript = `
-                        New-ADUser \`
-                            -Name "${user_data['Name']}" \`
-                            -GivenName "${firstName}" \`
-                            -Surname "${lastName}" \`
-                            -DisplayName "${user_data['Name']}" \`
-                            -UserPrincipalName "${emailAddress}" \`
-                            -Description "${user_data['Title']}" \`
-                            -HomeDirectory "\\\\dfh-fs0\\home$\\${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
-                            -HomeDrive "H:" \`
-                            -Path "OU=${user_data['Location']},OU=Dream Finders Users,DC=dreamfinders,DC=local" \`
-                            -Enabled $true \`
-                            -AccountPassword (ConvertTo-SecureString "${user_password}" -AsPlainText -Force) \`
-                            -PasswordNeverExpires $true \`
-                            -ChangePasswordAtLogon $false \`
-                            \` ;
-                        Set-ADUser \`
-                            -Identity "${user_data['Name']}" \`
-                            -Add @{ProxyAddresses="SMTP:${emailAddress}"} \`
-                            -EmailAddress "${emailAddress}" \`
-                            -SamAccountName "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
-                            -Office "${user_data['Location']}" \` ;
+New-ADUser \`
+    -Name "${user_data['Name']}" \`
+    -GivenName "${firstName}" \`
+    -Surname "${lastName}" \`
+    -DisplayName "${user_data['Name']}" \`
+    -UserPrincipalName "${emailAddress}" \`
+    -Description "${user_data['Title']}" \`
+    -HomeDirectory "\\\\dfh-fs0\\home$\\${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
+    -HomeDrive "H:" \`
+    -Path "OU=${user_data['Location']},OU=Dream Finders Users,DC=dreamfinders,DC=local" \`
+    -Enabled $true \`
+    -AccountPassword (ConvertTo-SecureString "${user_password}" -AsPlainText -Force) \`
+    -PasswordNeverExpires $true \`
+    -ChangePasswordAtLogon $false \`
+    \` ;
+Set-ADUser \`
+    -Identity "${user_data['Name']}" \`
+    -Add @{ProxyAddresses="SMTP:${emailAddress}"} \`
+    -EmailAddress "${emailAddress}" \`
+    -SamAccountName "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
+    -Office "${user_data['Location']}" \` ;
 
-                        Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
-                        Add-ADGroupMember -Identity "Citrix-CachedDesktop" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
-                        Add-ADGroupMember -Identity "Arctic Wolf Members" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
-
+Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
+Add-ADGroupMember -Identity "Citrix-CachedDesktop" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
+Add-ADGroupMember -Identity "Arctic Wolf Members" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
 ${groupMembershipCommand}
             `.trim();
 
