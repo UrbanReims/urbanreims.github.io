@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.12</title>
+    <title>IT Onboarding v0.13</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -177,7 +177,7 @@
             "Start Date": lines[7].split(":")[1].trim().replace(/,$/, ""),
             "Location": lines[8].split(":")[1].trim().replace(/,$/, ""),
             "ID": lines[9].split(":")[1].trim().replace(/,$/, "")
-        };
+            };
 
             // Split name into first and last name
             const [firstName, lastName] = user_data["Name"].split(" ");
@@ -192,16 +192,12 @@
                                 }
             
             // Extract the license type from the selected group (either "E1" or "E5")
-            // Then uses Email License determination to set the equipment type
             let emailLicense = "";
-            let equipmentType = "";
             
             if (groupOption.value === "O365_E1_Users") {
                 emailLicense = "E1";
-                equipmentType = "iPad";
             } else if (groupOption.value === "365 Lic-E5 Users") {
                 emailLicense = "E5";
-                equipmentType = "Laptop";
             }
 
             //Add the command to the ps script
@@ -232,8 +228,8 @@ Set-ADUser \`
     -Office "${user_data['Location']}" \` ;
 
 Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
-Add-ADGroupMember -Identity "Citrix-CachedDesktop" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
 Add-ADGroupMember -Identity "Arctic Wolf Members" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
+
 ${groupMembershipCommand}
             `.trim();
 
@@ -275,23 +271,23 @@ ${groupMembershipCommand}
             let cityCode = cityCodeMap[location] || "UNKNOWN"; // Default to "UNKNOWN" if the city is not found
 
         // Generate AuditMacs Form
-            const AuditMacsForm = `
+            const AuditMacsForm = 
+            `
 Item Requested For: DFH
-
 Division: ${cityCode} ${location}
 
 Name: ${user_data['Name']}
 Email: ${emailAddress}
 Email License: ${emailLicense}
 
-ATTN: ${user_data['Hiring Manager']}
 ADDRESS
+ATTN: ${user_data['Hiring Manager']}
 
 Phone: ${user_data['Phone']}
 DFH Ticket Number: 
 
 Request type: Onboarding
-Device Requested: ${equipmentType}
+Device Requested: Laptop
 Date Needed: ${user_data['Start Date']}
 
 Credentials:
