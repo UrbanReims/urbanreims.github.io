@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.13</title>
+    <title>IT Onboarding v0.14</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -228,10 +228,22 @@ Set-ADUser \`
     -Office "${user_data['Location']}" \` ;
 
 Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
-Add-ADGroupMember -Identity "Arctic Wolf Members" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
 
-${groupMembershipCommand}
             `.trim();
+            // Shipping Address Mapping
+
+                const shipAddress = {
+                        "Greenville": "1200 Woodruff Rd, Suite E1\nGreenville, SC 29607",
+                        "Charlotte": "301 McCullough Dr, Suite 109\nCharlotte, NC 28262",
+                        "Orlando": "8529 SOUTHPARK CIR, STE 130\nOrlando, FL 32819",
+                        "Raleigh": "7200 Falls of Neuse Rd, Suite 202\nRaleigh, NC 27615",
+                        "Fayetteville": "3709 Raeford Rd.\nFayetteville NC 28304",
+                        "Bluffton": "4454 Bluffton Park Crescent Suite 102\nBluffton, SC 29910",
+                        "Phoenix": "6929 East Greenway Parkway, Suite 102\nScottsdale, AZ 85254",
+                        "South Florida": "N/A\nN/A",
+                        "Wilmington": "1003 Olde Waterford way, 2G\nLeland, NC 28451",
+                        "Jacksonville": "14701 Phillips Hwy, Suite 300\nJacksonville, FL 32256"
+                        }; 
 
             // City Code Mapping
                 const cityCodeMap = {
@@ -255,20 +267,21 @@ ${groupMembershipCommand}
                         "Wilmington": "1202-0016",
                         "Charlotte": "1202-0018",
                         "Coventry - Regional": "1203-000",
-                        "Coventry - Houston": "1203-0091",
-                        "Coventry - Dallas/Fort Worth": "1203-0092",
-                        "Coventry - Austin": "1203-0093",
-                        "Coventry - San Antonio": "1203-0094",
+                        "Houston": "1203-0091",
+                        "Dallas/Fort Worth": "1203-0092",
+                        "Austin": "1203-0093",
+                        "San Antonio": "1203-0094",
                         "CH Regional": "1204-0000",
                         "Greenville": "1204-0020",
                         "Nashville": "1204-0021",
                         "Charleston": "1204-0022",
+                        "Atlanta": "1210-0044",
                         // each city is searched from the first term, it needs to match perfectly
                     };
 
         // Get the city code based on location
             const location = user_data["Location"];
-            let cityCode = cityCodeMap[location] || "UNKNOWN"; // Default to "UNKNOWN" if the city is not found
+            let cityCode = cityCodeMap[location] || "UNKNOWN"; // Defaults to UNKNOWN if the city is not found
 
         // Generate AuditMacs Form
             const AuditMacsForm = 
@@ -280,7 +293,7 @@ Name: ${user_data['Name']}
 Email: ${emailAddress}
 Email License: ${emailLicense}
 
-ADDRESS
+${shipAddress[location] || "Address not found"}
 ATTN: ${user_data['Hiring Manager']}
 
 Phone: ${user_data['Phone']}
