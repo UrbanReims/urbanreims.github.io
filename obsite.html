@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.19</title>
+    <title>IT Onboarding v0.20</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -388,7 +388,7 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Username (firstName.lastName format)
-        Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
+        Send "${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}"
         Send "{Tab}"
         
         ; Password
@@ -402,10 +402,10 @@ Password: ${user_password}
         ; Default Email
         Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
         Send "{Tab}"
-        Sleep 750
 
         ; Domain
         Send "{Down}"
+        Sleep 750
         Send "{{Enter}}"
         Send "{Tab}"
         Send "{Tab}"
@@ -426,17 +426,67 @@ Password: ${user_password}
         
         Sleep 500
     }
-    else if InStr(activeWindow, "Service2") {
-        ; Second Service Form Fill
-        Sleep 500
+    else if InStr(activeWindow, "Cached Desktop - Desktop Viewer") {
+        ; Start in First Name field
+        Send "${firstName}"
+        Send "{Tab}"
         
-        ; Add your second service form fill pattern here
-        ; Example structure:
-        Send "${user_data['Name']}"
+        ; Last Name
+        Send "${lastName}"
         Send "{Tab}"
-        Send "${emailAddress}"
+        
+        ; Skip Address (2 tabs)
+        Send "{Tab 2}"
+        
+        ; City
+        Send "${location}"
         Send "{Tab}"
-        ; ... additional fields as needed
+        
+        ; State
+        Send "FL"
+        Send "{Tab}"
+        
+        ; Skip Zip
+        Send "{Tab}"
+        
+        ; Skip Bus. Phone
+        Send "{Tab}"
+        
+        ; Home Phone (Location)
+        Send "${user_data['Location']}"
+        Send "{Tab}"
+        
+        ; Cell Phone
+        Send "${user_data['Phone']}"
+        Send "{Tab}"
+        
+        ; Skip Pager
+        Send "{Tab}"
+        
+        ; Fax
+        Send "{Tab}"
+        
+        ; SSN/SIN
+        Send "{Tab}"
+        
+        ; Skip commission fields (5 tabs to User Type)
+        Send "{Tab 5}"
+        
+        ; User Type
+        Send "AGENT"
+        Sleep 500
+        Send "{Tab}"
+        
+        ; User ID (first initial + last name lowercase)
+        Send "${firstName.charAt(0).toLowerCase()}${lastName.toLowerCase()}"
+        Send "{Tab}"
+        
+        ; Password
+        Send "${user_password}"
+        Send "{Tab}"
+        
+        ; Confirm Password
+        Send "${user_password}"
     }
     else if InStr(activeWindow, "Service3") {
         ; Third Service Form Fill
