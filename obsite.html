@@ -88,27 +88,48 @@
         <button class="theme-toggle" onclick="toggleTheme()">Switch to Light Mode</button><br>
         <!-- Input for onboarding text -->
             <label for="input_text">Paste the unformatted text here:</label><br>
-        <p>"Name":
-            "Phone": 
-            "Title": 
-            "Hiring Manager": 
-            "Department": 
-            "Type": 
-            "Equipment": 
-            "Operator": 
-            "Location": 
-            "Start Date": 
-            "ID": </p>
+        <p>"Name":<br> 
+            "Phone": <br> 
+            "Title": <br> 
+            "Hiring Manager": <br> 
+            "Department": <br> 
+            "Type": <br> 
+            "Equipment": <br> 
+            "Operator": <br> 
+            "Location": <br> 
+            "Start Date": <br> 
+            "ID": <br> </p>
         <textarea id="input_text" placeholder="Enter the onboarding bullets Name through Start Date"></textarea><br>
         <!-- Input for password -->
             <label for="user_password">Enter Password:</label><br>
         <input type="password" id="user_password" placeholder="TempP@ssw0rd!" style="width: 300px; margin-bottom: 20px;"><br>
+
+        <!-- user selection for email type -->
+
         <div>
             <label>Select Group:</label><br>
             <input type="radio" id="group_e1" name="group_option" value="O365_E1_Users">
             <label for="group_e1">E1 User</label><br>
             <input type="radio" id="group_e5" name="group_option" value="365 Lic-E5 Users">
             <label for="group_e5">E5 User</label>
+        </div>
+
+        <!-- User selection for services-->
+
+        <div>
+            <label>Select Services</label>
+
+            <input type="radio" id="dS" name="docu" value="dS">
+            <label for="dS">DS</label><br>
+
+            <input type="radio" id="adobe" name="Adobe" value="aD">
+            <label for="adobe">Adobe</label><br>
+
+            <input type="radio" id="lasso" name="Lasso" value="aD">
+            <label for="lasso">Lasso</label><br>
+
+            <input type="radio" id="NS" name="newstar" value="aD">
+            <label for="NS">NewStar</label><br>
         </div>
         <br>        
 
