@@ -357,72 +357,106 @@ Password: ${user_password}
             const autoHotKey = 
 `#Requires AutoHotkey v2.0
 
-/* LASSO */
-
 ^+f::
 {
+    ; Get the title of the active window
+    activeWindow := WinGetTitle("A")
+    
+    ; Service selection based on active window
+    if InStr(activeWindow, "Manage Users") {
+        ; First Service Form Fill
+        Sleep 500
+    
+        ; First Name
+        Send "${firstName}"
+        Send "{Tab}"
+        
+        ; Last Name
+        Send "${lastName}"
+        Send "{Tab}"
+        
+        ; Skip Login Disabled checkbox
+        Send "{Tab}"
+        
+        ; Skip Portrait Link
+        Send "{Tab}"
+        
+        ; Skip Calendar Link
+        Send "{Tab}"
+        
+        ; Skip Virtual Office Link
+        Send "{Tab}"
+        
+        ; Username (firstName.lastName format)
+        Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
+        Send "{Tab}"
+        
+        ; Password
+        Send "${user_password}"
+        Send "{Tab}"
+        
+        ; Confirm Password
+        Send "${user_password}"
+        Send "{Tab}"
+        
+        ; Default Email
+        Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
+        Send "{Tab}"
+        Sleep 750
+
+        ; Domain
+        Send "{Down}"
+        Send "{{Enter}}"
+        Send "{Tab}"
+        Send "{Tab}"
+
+        ; Skip Phone Number
+        Send "{Tab}"
+        Send "{Tab}"
+        
+        ; Mobile Phone (same as phone)
+        Send "${user_data['Phone']}"
+        Send "{Tab}"
+        
+        ; Skip Agent ID
+        Send "{Tab}"
+        
+        ; Title
+        Send "${user_data['Title']}"
+        
+        Sleep 500
+    }
+    else if InStr(activeWindow, "Service2") {
+        ; Second Service Form Fill
+        Sleep 500
+        
+        ; Add your second service form fill pattern here
+        ; Example structure:
+        Send "${user_data['Name']}"
+        Send "{Tab}"
+        Send "${emailAddress}"
+        Send "{Tab}"
+        ; ... additional fields as needed
+    }
+    else if InStr(activeWindow, "Service3") {
+        ; Third Service Form Fill
+        Sleep 500
+        
+        ; Add your third service form fill pattern here
+        ; Example structure:
+        Send "${firstName.charAt(0).toLowerCase()}${lastName.toLowerCase()}"
+        Send "{Tab}"
+        Send "${user_password}"
+        Send "{Tab}"
+        ; ... additional fields as needed
+    }
+    else {
+        MsgBox "Please open one of the supported service windows first."
+        return
+    }
+    
     Sleep 500
-    
-    ; First Name
-    Send "${firstName}"
-    Send "{Tab}"
-    
-    ; Last Name
-    Send "${lastName}"
-    Send "{Tab}"
-    
-    ; Skip Login Disabled checkbox
-    Send "{Tab}"
-    
-    ; Skip Portrait Link
-    Send "{Tab}"
-    
-    ; Skip Calendar Link
-    Send "{Tab}"
-    
-    ; Skip Virtual Office Link
-    Send "{Tab}"
-    
-    ; Username (firstName.lastName format)
-    Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
-    Send "{Tab}"
-    
-    ; Password
-    Send "${user_password}"
-    Send "{Tab}"
-    
-    ; Confirm Password
-    Send "${user_password}"
-    Send "{Tab}"
-    
-    ; Default Email
-    Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
-    Send "{Tab}"
-    Sleep 750
-
-    ; Domain
-    Send "{Down}"
-    Send "{{Enter}}"
-    Send "{Tab}"
-    Send "{Tab}"
-
-    ; Skip Phone Number
-    Send "{Tab}"
-    Send "{Tab}"
-    
-    ; Mobile Phone (same as phone)
-    Send "${user_data['Phone']}"
-    Send "{Tab}"
-    
-    ; Skip Agent ID
-    Send "{Tab}"
-    
-    ; Title
-    Send "${user_data['Title']}"
-    
-    Sleep 500
-}`.trim()
-
+}`.trim();
             
             // Display the results by changing style to block, making outputs seen by the user
             document.getElementById("powershell_output").style.display = "block";
