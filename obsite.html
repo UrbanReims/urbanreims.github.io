@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.18</title>
+    <title>IT Onboarding v0.19</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -396,11 +396,16 @@ Password: ${user_password}
     Send "{Tab}"
     
     ; Default Email
-    Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}@SelectVerifiedDomain.com"
+    Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
     Send "{Tab}"
-    
-    ; Phone Number
-    Send "${user_data['Phone']}"
+
+    ; Domain
+    Send "{Down}"
+    Send "{{Enter}}"
+    Send "{Tab}"
+    Send "{Tab}"
+
+    ; Skip Phone Number
     Send "{Tab}"
     
     ; Mobile Phone (same as phone)
