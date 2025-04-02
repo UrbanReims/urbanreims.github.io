@@ -398,6 +398,7 @@ Password: ${user_password}
     ; Default Email
     Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
     Send "{Tab}"
+    Sleep 750
 
     ; Domain
     Send "{Down}"
@@ -406,6 +407,7 @@ Password: ${user_password}
     Send "{Tab}"
 
     ; Skip Phone Number
+    Send "{Tab}"
     Send "{Tab}"
     
     ; Mobile Phone (same as phone)
