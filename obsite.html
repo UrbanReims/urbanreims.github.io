@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.15</title>
+    <title>IT Onboarding v0.17</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -145,6 +145,11 @@
             <pre id="audit_macs"></pre>
             <button class="copy-btn" onclick="copyToClipboard('audit_macs')">Copy AuditMacsForm</button>
         </div>
+        <div class="output" id="AHK_output" style="display: none;">
+            <h2>AHK Script</h2>
+            <pre id="auto_hot_key"></pre>
+            <button class="copy-btn" onclick="copyToClipboard('auto_hot_key')">Copy AutoHotKey Script</button>
+        </div>
     </div>
 
     <script>
@@ -172,6 +177,7 @@
         function generateScripts() {
             //captures the input_text from the text box and allows JS to read it
             const inputText = document.getElementById("input_text").value.trim();
+
             //captures the user_password and passes it to JS
             const user_password = document.getElementById("user_password").value.trim();
 
@@ -181,10 +187,9 @@
                 alert("Please enter complete user information.");
                 return;
             }
-            
-            
-            //added splits to remove commas from orignal line that were improperly formatting final results
-            
+
+            //begin the user_data sorting from user text
+
             const fields = 
             [
             "Name",
@@ -205,23 +210,8 @@
             user_data[fields[i]] = lines[i].split(":")[1].trim().replace(/,$/, "");
             }
 
-            /* OLD USER DATA 
-            
-            const user_data = {
-          
-
-            "Name": lines[0].split(":")[1].trim().replace(/,$/, ""),
-            "Phone": lines[1].split(":")[1].trim().replace(/,$/, ""),
-            "Title": lines[2].split(":")[1].trim().replace(/,$/, ""),
-            "Hiring Manager": lines[3].split(":")[1].trim().replace(/,$/, ""),
-            "Department": lines[4].split(":")[1].trim().replace(/,$/, ""),
-            "N/R": lines[5].split(":")[1].trim().replace(/,$/, ""),
-            "Type": lines[6].split(":")[1].trim().replace(/,$/, ""),
-            "Start Date": lines[7].split(":")[1].trim().replace(/,$/, ""),
-            "Location": lines[8].split(":")[1].trim().replace(/,$/, ""),
-            "ID": lines[9].split(":")[1].trim().replace(/,$/, "")
-            };
-
+            /*
+                Starts changing with the user data
             */
 
             // Split name into first and last name
@@ -236,17 +226,7 @@
                                 return;
                                 }
             
-            // Extract the license type from the selected group (either "E1" or "E5")
-            let emailLicense = "";
             
-            if (groupOption.value === "O365_E1_Users") {
-                emailLicense = "E1";
-            } else if (groupOption.value === "365 Lic-E5 Users") {
-                emailLicense = "E5";
-            }
-
-            //Add the command to the ps script
-            const groupMembershipCommand = `Add-ADGroupMember -Identity "${groupOption.value}" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"`;
 
             // Generate PowerShell script
             const powershellScript = `
@@ -328,6 +308,18 @@ Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastNam
             const location = user_data["Location"];
             let cityCode = cityCodeMap[location] || "UNKNOWN"; // Defaults to UNKNOWN if the city is not found
 
+        // Extract the license type from the selected group (either "E1" or "E5")
+            let emailLicense = "";
+                
+            if (groupOption.value === "O365_E1_Users") 
+            {
+                emailLicense = "E1";
+            } 
+            else if (groupOption.value === "365 Lic-E5 Users") 
+            {
+                emailLicense = "E5";
+            }
+
         // Generate AuditMacs Form
             const AuditMacsForm = 
             `
@@ -362,11 +354,76 @@ Password: ${user_password}
 
             `.trim();
 
+            const autoHotKey = 
+`#Requires AutoHotkey v2.0
+
+/* LASSO */
+
+^+f::
+{
+    Sleep 500
+    
+    ; First Name
+    Send "${firstName}"
+    Send "{Tab}"
+    
+    ; Last Name
+    Send "${lastName}"
+    Send "{Tab}"
+    
+    ; Skip Login Disabled checkbox
+    Send "{Tab}"
+    
+    ; Skip Portrait Link
+    Send "{Tab}"
+    
+    ; Skip Calendar Link
+    Send "{Tab}"
+    
+    ; Skip Virtual Office Link
+    Send "{Tab}"
+    
+    ; Username (firstName.lastName format)
+    Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
+    Send "{Tab}"
+    
+    ; Password
+    Send "${user_password}"
+    Send "{Tab}"
+    
+    ; Confirm Password
+    Send "${user_password}"
+    Send "{Tab}"
+    
+    ; Default Email
+    Send "${firstName.toLowerCase()}.${lastName.toLowerCase()}@SelectVerifiedDomain.com"
+    Send "{Tab}"
+    
+    ; Phone Number
+    Send "${user_data['Phone']}"
+    Send "{Tab}"
+    
+    ; Mobile Phone (same as phone)
+    Send "${user_data['Phone']}"
+    Send "{Tab}"
+    
+    ; Skip Agent ID
+    Send "{Tab}"
+    
+    ; Title
+    Send "${user_data['Title']}"
+    
+    Sleep 500
+}`.trim()
+
+            
             // Display the results by changing style to block, making outputs seen by the user
             document.getElementById("powershell_output").style.display = "block";
             document.getElementById("form_output").style.display = "block";
+            document.getElementById("AHK_output").style.display = "block";
             document.getElementById("powershell_script").textContent = powershellScript;
             document.getElementById("audit_macs").textContent = AuditMacsForm;
+            document.getElementById("auto_hot_key").textContent = AuditMacsForm;
         }
         //COPY BUTTONS
         function copyToClipboard(elementId) {
