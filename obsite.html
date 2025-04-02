@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.14</title>
+    <title>IT Onboarding v0.15</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -93,9 +93,8 @@
             "Title": <br> 
             "Hiring Manager": <br> 
             "Department": <br> 
+            "New/Return": <br> 
             "Type": <br> 
-            "Equipment": <br> 
-            "Operator": <br> 
             "Location": <br> 
             "Start Date": <br> 
             "ID": <br> </p>
@@ -117,7 +116,7 @@
         <!-- User selection for services-->
 
         <div>
-            <label>Select Services</label>
+            <label>Select Services</label><br>
 
             <input type="radio" id="dS" name="docu" value="dS">
             <label for="dS">DS</label><br>
@@ -185,6 +184,29 @@
             
             
             //added splits to remove commas from orignal line that were improperly formatting final results
+            
+            const fields = 
+            [
+            "Name",
+            "Phone",
+            "Title",
+            "Hiring Manager",
+            "Department",
+            "N/R",
+            "Type",
+            "Start Date",
+            "Location",
+            "ID",
+            ];
+
+            const user_data = {};
+
+            for (let i = 0; i < fields.length; i++) {
+            user_data[fields[i]] = lines[i].split(":")[1].trim().replace(/,$/, "");
+            }
+
+            /* OLD USER DATA 
+            
             const user_data = {
           
 
@@ -199,6 +221,8 @@
             "Location": lines[8].split(":")[1].trim().replace(/,$/, ""),
             "ID": lines[9].split(":")[1].trim().replace(/,$/, "")
             };
+
+            */
 
             // Split name into first and last name
             const [firstName, lastName] = user_data["Name"].split(" ");
