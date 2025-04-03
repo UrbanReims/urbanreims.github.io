@@ -533,8 +533,9 @@ Password: ${user_password}
         Send "${user_data['Phone']}"
         Send "{Tab}"
         
-        ; Skip Fax
+        ; Skip Fax and send some phantom tab that buildpro has in their UI
         Send "{Tab}"
+        Sent "{Tab}"
         
         ; Email
         Send "${emailAddress}"
