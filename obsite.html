@@ -113,23 +113,6 @@
             <label for="group_e5">E5 User</label>
         </div>
 
-        <!-- User selection for services-->
-
-        <div>
-            <label>Select Services</label><br>
-
-            <input type="radio" id="dS" name="docu" value="dS">
-            <label for="dS">DS</label><br>
-
-            <input type="radio" id="adobe" name="Adobe" value="aD">
-            <label for="adobe">Adobe</label><br>
-
-            <input type="radio" id="lasso" name="Lasso" value="aD">
-            <label for="lasso">Lasso</label><br>
-
-            <input type="radio" id="NS" name="newstar" value="aD">
-            <label for="NS">NewStar</label><br>
-        </div>
         <br>        
 
         <button onclick="generateScripts()">Generate Scripts</button>
@@ -147,6 +130,8 @@
         </div>
         <div class="output" id="AHK_output" style="display: none;">
             <h2>AHK Script</h2>
+            <pre id="auto_hot_key"></pre>
+            <button class="copy-btn" onclick="downloadAHKFile()">Download AutoHotKey Script</button>
             <pre id="auto_hot_key"></pre>
             <button class="copy-btn" onclick="copyToClipboard('auto_hot_key')">Copy AutoHotKey Script</button>
         </div>
@@ -591,7 +576,7 @@ Password: ${user_password}
         Send "{Tab}"
         Sleep 500
         Send "D"
-        Sleep 5000
+        Sleep 500
         Send "D"
         Sleep 500
         Send "{Tab}"
@@ -614,6 +599,25 @@ Password: ${user_password}
             document.getElementById("powershell_script").textContent = powershellScript;
             document.getElementById("audit_macs").textContent = AuditMacsForm;
             document.getElementById("auto_hot_key").textContent = autoHotKey;
+        }
+        // Download AHK file
+        function downloadAHKFile(firstName, lastName) {
+            const scriptContent = document.getElementById("auto_hot_key").textContent;
+            const filename = firstName + lastName + ".ahk";
+            const element = document.createElement("a");
+
+            element.setAttribute(
+            "href",
+            "data:text/plain;charset=utf-8," + encodeURIComponent(scriptContent)
+            );
+            element.setAttribute("download", filename);
+
+            element.style.display = "none";
+            document.body.appendChild(element);
+
+            element.click();
+
+            document.body.removeChild(element);
         }
         //COPY BUTTONS
         function copyToClipboard(elementId) {
