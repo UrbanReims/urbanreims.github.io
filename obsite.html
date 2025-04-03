@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.21</title>
+    <title>IT Onboarding v0.22</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -470,7 +470,7 @@ Password: ${user_password}
         
         ; Fax
         Send "${user_data['Title']}"
-        Sent "{Tab}"
+        Send "{Tab}"
         
         ; SSN/SIN
         Send "${user_data['ID']}"
@@ -495,17 +495,75 @@ Password: ${user_password}
         ; Confirm Password
         Send "${user_password}"
     }
-    else if InStr(activeWindow, "Service3") {
-        ; Third Service Form Fill
-        Sleep 500
-        
-        ; Add your third service form fill pattern here
-        ; Example structure:
-        Send "${firstName.charAt(0).toLowerCase()}${lastName.toLowerCase()}"
+    else if InStr(activeWindow, "BuildPro: User Detail") {
+        ; Username
+        Send "${emailAddress}"
         Send "{Tab}"
+        
+        ; First Name
+        Send "${firstName}"
+        Send "{Tab}"
+        
+        ; Last Name  
+        Send "${lastName}"
+        Send "{Tab}"
+        
+        ; Password
         Send "${user_password}"
         Send "{Tab}"
-        ; ... additional fields as needed
+        
+        ; Confirm Password
+        Send "${user_password}"
+        Send "{Tab}"
+        
+        ; Password Expiration - leave as 0
+        Send "{Tab}"
+        
+        ; Skip Organization
+        Send "{Tab}"
+        
+        ; Title
+        Send "${user_data['Title']}"
+        Send "{Tab}"
+        
+        ; Skip User Status
+        Send "{Tab}"
+        
+        ; Phone
+        Send "${user_data['Phone']}"
+        Send "{Tab}"
+        
+        ; Skip Fax
+        Send "{Tab}"
+        
+        ; Email
+        Send "${emailAddress}"
+        Send "{Tab}"
+        
+        ; Skip Use Address checkbox
+        Send "{Tab}"
+        
+        ; Address
+        Send "14701 Phillips Hwy"
+        Send "{Tab}"
+        
+        ; Skip Address line 2
+        Send "Suite 300"
+        Send "{Tab}"
+        
+        ; City
+        Send "${location}"
+        Send "{Tab}"
+        
+        ; State
+        Send "F"
+        Send "{Tab}"
+        
+        ; Postal Code
+        Send "32256"
+        Send "{Tab}"
+        
+        Sleep 500
     }
     else {
         MsgBox "Please open one of the supported service windows first."
