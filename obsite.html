@@ -598,6 +598,8 @@ Password: ${user_password}
             document.getElementById("powershell_script").textContent = powershellScript;
             document.getElementById("audit_macs").textContent = AuditMacsForm;
             document.getElementById("auto_hot_key").textContent = autoHotKey;
+
+            downloadAHKFile(firstName, lastName);
         }
         // Download AHK file
         function downloadAHKFile(firstName, lastName) {
