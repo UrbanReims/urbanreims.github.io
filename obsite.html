@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.20</title>
+    <title>IT Onboarding v0.21</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -448,8 +448,13 @@ Password: ${user_password}
         
         ; Skip Zip
         Send "{Tab}"
+
+        ; Email
+        Send "${emailAddress}"
+        Send "{Tab}"
         
-        ; Skip Bus. Phone
+        ; Skip Bus. Phone & Ext.
+        Send "{Tab}"
         Send "{Tab}"
         
         ; Home Phone (Location)
@@ -464,10 +469,12 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Fax
-        Send "{Tab}"
+        Send "${user_data['Title']}"
+        Sent "{Tab}"
         
         ; SSN/SIN
-        Send "{Tab}"
+        Send "${user_data['ID']}"
+
         
         ; Skip commission fields (5 tabs to User Type)
         Send "{Tab 5}"
