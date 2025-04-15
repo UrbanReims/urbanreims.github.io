@@ -308,21 +308,23 @@ Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastNam
             const AuditMacsForm = 
             `
 Item Requested For: DFH
-Division: ${cityCode} ${location}
 
 Name: ${user_data['Name']}
 Email: ${emailAddress}
 Email License: ${emailLicense}
+PC/Citrix Username: ${firstName.toLowerCase()}.${lastName.toLowerCase()}
 
 ${shipAddress[location] || "Address not found"}
 ATTN: ${user_data['Hiring Manager']}
-
 Phone: ${user_data['Phone']}
-DFH Ticket Number: 
 
+DFH Ticket Number: 
 Request type: Onboarding
 Device Requested: Laptop
+Grade for devices: 
 Date Needed: ${user_data['Start Date']}
+
+Division: ${cityCode} ${location}
 
 Credentials:
 Email
