@@ -378,11 +378,11 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Password
-        Send "${user_password}"
+        SendText "${user_password}"
         Send "{Tab}"
         
         ; Confirm Password
-        Send "${user_password}"
+        SendText "${user_password}"
         Send "{Tab}"
         
         ; Default Email
@@ -475,11 +475,13 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Password
-        Send "${user_password}"
+        SendText "${user_password}"
+        Sleep 200
         Send "{Tab}"
         
         ; Confirm Password
-        Send "${user_password}"
+        SendText "${user_password}"
+        Sleep 200
     }
     else if InStr(activeWindow, "BuildPro: User Detail") {
         ; Username
