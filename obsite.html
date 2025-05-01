@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.25</title>
+    <title>IT Onboarding v0.26</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -214,6 +214,7 @@
 
             // Generate PowerShell script
             const powershellScript = `
+# 1. Create the user (without HomeDirectory/HomeDrive)
 New-ADUser \`
     -Name "${user_data['Name']}" \`
     -GivenName "${firstName}" \`
@@ -221,24 +222,41 @@ New-ADUser \`
     -DisplayName "${user_data['Name']}" \`
     -UserPrincipalName "${emailAddress}" \`
     -Description "${user_data['Title']}" \`
-    -HomeDirectory "\\\\dfh-fs0\\home$\\${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
-    -HomeDrive "H:" \`
     -Path "OU=${user_data['Location']},OU=Dream Finders Users,DC=dreamfinders,DC=local" \`
     -Enabled $true \`
     -AccountPassword (ConvertTo-SecureString "${user_password}" -AsPlainText -Force) \`
     -PasswordNeverExpires $true \`
     -ChangePasswordAtLogon $false \`
-    \` ;
+    -SamAccountName "${firstName.toLowerCase()}.${lastName.toLowerCase()}" ;
+
+# 2. Create the home directory and set permissions
+$homeDir = "\\\\dfh-fs0\\home$\\${firstName.toLowerCase()}.${lastName.toLowerCase()}"
+if (!(Test-Path $homeDir)) {
+    New-Item -ItemType Directory -Path $homeDir -Force | Out-Null
+}
+$acl = Get-Acl $homeDir
+$rule = New-Object System.Security.AccessControl.FileSystemAccessRule(
+    "${firstName.toLowerCase()}.${lastName.toLowerCase()}",
+    "FullControl",
+    "ContainerInherit,ObjectInherit",
+    "None",
+    "Allow"
+)
+$acl.SetAccessRule($rule)
+Set-Acl $homeDir $acl
+
+# 3. Set HomeDirectory and HomeDrive after folder exists
 Set-ADUser \`
-    -Identity "${user_data['Name']}" \`
+    -Identity "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
+    -HomeDirectory $homeDir \`
+    -HomeDrive "H:" \`
     -Add @{ProxyAddresses="SMTP:${emailAddress}"} \`
     -EmailAddress "${emailAddress}" \`
-    -SamAccountName "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
-    -Office "${user_data['Location']}" \` ;
+    -Office "${user_data['Location']}" ;
 
-Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \` ;
-
-            `.trim();
+# 4. Add to group
+Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
+`.trim();
             // Shipping Address Mapping
 
                 const shipAddress = {
