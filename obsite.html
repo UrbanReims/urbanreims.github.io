@@ -574,7 +574,8 @@ Password: ${user_password}
     }
         else if InStr(activeWindow, "Add User | Docusign") {
         ; Email
-        Send "${emailAddress}"
+        SendText "${emailAddress}"
+        Sleep 1000
         Send "{Tab}"
         Send "{Enter}"  
         Sleep 1000
