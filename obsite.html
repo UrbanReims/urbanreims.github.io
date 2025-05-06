@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.26</title>
+    <title>IT Onboarding v0.27</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -360,7 +360,43 @@ Password: ${user_password}
 
             const autoHotKey = 
 `#Requires AutoHotkey v2.0
+^+g::
+{
+    ; NSE address book
+    activeWindow := WinGetTitle("A")
+    if InStr(activeWindow, "Cached Desktop - Desktop Viewer") {
+        ; Search for user and select user
+        SendText "${lastName}"
+        Sleep 100
+        SendText ", ${firstName}"
+        Send "{Enter}"
+        Sleep 1000
+        Send "{Enter}"
 
+        ; Start making changes to UserFields
+        Send "!u"
+        Sleep 500
+        Send {Tab}
+        SendText "${user_data['ID']}"
+        Send {Tab}
+        SendText "Sales - Michelle Murrhee / Purchasing - Aaron Matevia"
+        Send {Tab}
+        Send "{Enter}"
+
+        ; Start changing the address fields
+        Send "!e"
+        Sleep 500
+        Send {TAB 6}
+        SendText "${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}"
+        Sleep 500
+        Send {TAB 11}
+        SendText "Employee"
+    }
+    else {
+        MsgBox "Please open one of the supported service windows first."
+        return
+}
+}
 ^+f::
 {
     ; Get the title of the active window
