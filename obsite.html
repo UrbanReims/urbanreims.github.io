@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.27</title>
+    <title>IT Onboarding v0.28</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -380,11 +380,11 @@ Password: ${user_password}
         ; Start making changes to UserFields
         Send "!u"
         Sleep 500
-        Send {Tab}
+        Send "{Tab}"
         SendText "${user_data['ID']}"
-        Send {Tab}
+        Send "{Tab}"
         SendText "Sales - Michelle Murrhee / Purchasing - Aaron Matevia"
-        Send {Tab}
+        Send "{Tab}"
         Send "{Enter}"
 
         ; Start changing the address fields
