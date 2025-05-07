@@ -369,14 +369,6 @@ Password: ${user_password}
     ; NSE address book
     activeWindow := WinGetTitle("A")
     if InStr(activeWindow, "Cached Desktop - Desktop Viewer") {
-        ; Search for user and select user
-        SendText "${lastName}"
-        Sleep 100
-        SendText ", ${firstName}"
-        Send "{Enter}"
-        Sleep 1000
-        Send "{Enter}"
-
         ; Start making changes to UserFields
         Send "!u"
         Sleep 500
@@ -390,10 +382,10 @@ Password: ${user_password}
         ; Start changing the address fields
         Send "!e"
         Sleep 500
-        Send {TAB 6}
+        Send "{TAB 6}"
         SendText "${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}"
         Sleep 500
-        Send {TAB 11}
+        Send "{TAB 11}"
         SendText "Employee"
     }
     else {
