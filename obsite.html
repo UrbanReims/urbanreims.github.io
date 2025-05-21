@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.30</title>
+    <title>IT Onboarding v0.31</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -130,10 +130,11 @@
         </div>
         <div class="output" id="AHK_output" style="display: none;">
             <h2>AHK Script</h2>
-            <ol>
+            <ul>
                 <li>Ctrl + Shift + F = Main programs</li>
-                <li>Ctrl + Shift + G = NSE</li>
-            </ol>
+                <li>Ctrl + Shift + G = NSE Address Book (First find the user and enter thier profile, then start)</li>
+                <li>Ctrl + Shift + U = NSE User Admin (Must be in a new user, operator box at start)</li>
+            </ul>
             <button class="copy-btn" onclick="downloadAHKFile()">Download AutoHotKey Script</button>
             <button class="copy-btn" onclick="copyToClipboard('auto_hot_key')">Copy AutoHotKey Script</button>
             <pre id="auto_hot_key"></pre>
@@ -369,8 +370,6 @@ Password: ${user_password}
     ; NSE address book
     activeWindow := WinGetTitle("A")
     if InStr(activeWindow, "Cached Desktop - Desktop Viewer") {
-        
-
         ; Start making changes to UserFields
         Send "u"
         Sleep 500
@@ -390,6 +389,39 @@ Password: ${user_password}
         Sleep 500
         Send "{TAB 11}"
         SendText "Employee"
+    }
+    else {
+        MsgBox "Please open one of the supported service windows first."
+        return
+}
+}
+^+u::
+{
+    ; NSE UserAdmin
+    activeWindow := WinGetTitle("A")
+    if InStr(activeWindow, "Cached Desktop - Desktop Viewer") {
+        SendText "${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}"
+        Send "{Enter}"
+        Send "${firstName} ${lastName}"
+        Send "{F2}"
+        Sleep 200
+
+        SendText "${user_password}"
+        Send "{Tab}"
+        SendText "${user_password}"
+        Send "{Enter}"
+        Send "{Enter}"
+        Sleep 200
+        Send "{TAB 3}"
+
+        Send "${user_data['Phone']}"
+        Send "{TAB 2}"
+
+        Send "${emailAddress}"
+        Send "{Tab}"
+        Sleep 100
+
+
     }
     else {
         MsgBox "Please open one of the supported service windows first."
