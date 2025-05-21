@@ -400,7 +400,7 @@ Password: ${user_password}
     ; NSE UserAdmin
     activeWindow := WinGetTitle("A")
     if InStr(activeWindow, "Cached Desktop - Desktop Viewer") {
-        SendText "${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}"
+        SendText "${firstName.charAt(0).toLowerCase()}${lastName.toLowerCase()}"
         Send "{Enter}"
         Send "${firstName} ${lastName}"
         Send "{F2}"
