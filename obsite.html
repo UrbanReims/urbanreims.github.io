@@ -257,7 +257,8 @@ Set-ADUser \`
     -HomeDrive "H:" \`
     -Add @{ProxyAddresses="SMTP:${emailAddress}"} \`
     -EmailAddress "${emailAddress}" \`
-    -Office "${user_data['Location']}" ;
+    -Office "${user_data['Location']}" \`
+    -employeeID "${user_data['ID']}" ;
 
 # 4. Add to group
 Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
@@ -640,7 +641,7 @@ Password: ${user_password}
         
         Sleep 500
     }
-        else if InStr(activeWindow, "User | Admin | Docusign") {
+        else if InStr(activeWindow, "Users | Admin | Docusign") {
         
         ; Full Name
         Send "${user_data['Name']}"
@@ -652,26 +653,6 @@ Password: ${user_password}
         Send "{Tab 11}"
         Send "{Enter}"  
         Sleep 2000
-
-        ; Account Membership
-        Send "{Tab}"
-        Sleep 500
-        Send "{Down}"
-        Sleep 300
-
-        ; Permission Profile
-        Send "{Tab}"
-        Sleep 200
-        Send "{Down}"
-        Send "{Tab}"
-        Sleep 200
-        Send "{Down}"
-
-        ; Groups
-        Send "{Tab 2}"
-        Sleep 100
-        Send "${location}"
-        Sleep 100
         
     }
     else {
