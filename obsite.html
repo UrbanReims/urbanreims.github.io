@@ -261,7 +261,7 @@ Set-ADUser \`
     -employeeID "${user_data['ID']}" ;
 
 # 4. Add to group
-Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
+Add-ADGroupMember -Identity "EntraID-MFA-Users" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
 `.trim();
             // Shipping Address Mapping
 
