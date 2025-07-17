@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.32</title>
+    <title>IT Onboarding v0.34</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -654,6 +654,39 @@ Password: ${user_password}
         Send "{Tab 11}"
         Send "{Enter}"  
         Sleep 2000
+        
+    }
+    else if InStr(activeWindow, "Add User | Docusign") {
+        ; Email
+        Send "${emailAddress}"
+        Send "{Tab}"
+        Send "{Enter}"  
+        Sleep 1000
+        Send "{Tab}"
+        
+        ; Full Name
+        Send "${user_data['Name']}"
+
+        ; Skip past
+        Send "{Tab 10}"
+        Send "{Enter}"
+        Sleep 500
+
+        ; Skip 3rd menu
+        Send "{Tab 2}"
+        Send "{Enter}"
+        Sleep 700
+
+        ; 4th menu
+        Send "{Tab}"
+        Sleep 500
+        Send "D"
+        Sleep 500
+        Send "D"
+        Sleep 500
+        Send "{Tab}"
+        Send "${location}"
+        Sleep 500
         
     }
     else {
