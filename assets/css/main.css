@@ -224,63 +224,58 @@ input, select, textarea {
 /* Container */
 
 	.container {
-		margin: 0 auto;
-		max-width: calc(100% - 50px);
-		width: 1200px;
-	}
+    margin: 0 auto;
+    max-width: 100%; /* Make it adapt to full screen width */
+    padding: 0 15px; /* Add padding for spacing */
+    width: 90%; /* Use a percentage for flexible width */
+}
 
-		.container.medium {
-			width: 900px;
-		}
+.container.medium {
+    width: 80%; /* Adjust for medium containers */
+}
 
-		@media screen and (max-width: 1680px) {
+/* Breakpoints for responsiveness */
+@media screen and (max-width: 1680px) {
+    .container {
+        width: 85%; /* Adjust width for large screens */
+    }
 
-			.container {
-				width: 1200px;
-			}
+    .container.medium {
+        width: 75%; /* Adjust for medium containers */
+    }
+}
 
-				.container.medium {
-					width: 900px;
-				}
+@media screen and (max-width: 1280px) {
+    .container {
+        width: 80%; /* Slightly smaller width for mid-sized screens */
+    }
 
-		}
+    .container.medium {
+        width: 70%;
+    }
+}
 
-		@media screen and (max-width: 1280px) {
+@media screen and (max-width: 980px) {
+    .container {
+        width: 100%; /* Full width for smaller screens */
+    }
 
-			.container {
-				width: 960px;
-			}
+    .container.medium {
+        width: 90%; /* Adjust for better readability */
+    }
+}
 
-				.container.medium {
-					width: 720px;
-				}
+@media screen and (max-width: 736px) {
+    .container {
+        width: 100%;
+        max-width: 100%;
+        padding: 0 10px; /* Reduce padding for very small screens */
+    }
 
-		}
-
-		@media screen and (max-width: 980px) {
-
-			.container {
-				width: 100%;
-			}
-
-				.container.medium {
-					width: 75%;
-				}
-
-		}
-
-		@media screen and (max-width: 736px) {
-
-			.container {
-				width: 100%;
-				max-width: calc(100% - 30px);
-			}
-
-				.container.medium {
-					width: 100%;
-				}
-
-		}
+    .container.medium {
+        width: 100%; /* Use full width for mobile */
+    }
+}
 
 /* Row */
 
