@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.35</title>
+    <title>IT Onboarding v0.36</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -164,72 +164,82 @@
         }
         //TEXT PARSING
         function generateScripts() {
-            //captures the input_text from the text box and allows JS to read it
-            const inputText = document.getElementById("input_text").value.trim();
+            const inputText = getInputText();
+            const userPassword = getUserPassword();
+            const lines = parseInputText(inputText);
 
-            //captures the user_password and passes it to JS
-            const user_password = document.getElementById("user_password").value.trim();
-
-            // Split input text into lines and extract key details
-            const lines = inputText.split('\n').map(line => line.trim()).filter(line => line);
             if (lines.length < 6) {
                 alert("Please enter complete user information.");
                 return;
             }
 
-            //begin the user_data sorting from user text
+            const userData = extractUserData(lines);
+            const [firstName, lastName] = getFirstAndLastName(userData["Name"]);
+            const emailAddress = createEmailAddress(firstName, lastName);
+            const groupOption = getSelectedGroupOption();
 
-            const fields = 
-            [
-            "Name",
-            "Phone",
-            "Title",
-            "Hiring Manager",
-            "Department",
-            "N/R",
-            "Type",
-            "Start Date",
-            "Location",
-            "ID",
-            ];
-
-            const user_data = {};
-
-            for (let i = 0; i < fields.length; i++) {
-            user_data[fields[i]] = lines[i].split(":")[1].trim().replace(/,$/, "");
+            if (!groupOption) {
+                alert("Please select a group option.");
+                return;
             }
 
-            /*
-                Starts changing with the user data
-            */
+            const powershellScript = generatePowerShellScript(userData, firstName, lastName, emailAddress, userPassword);
+            const auditMacsForm = generateAuditMacsForm(userData, firstName, lastName, emailAddress, userPassword, groupOption);
+            const autoHotKeyScript = generateAutoHotKeyScript(userData, firstName, lastName, emailAddress, userPassword);
 
-            // Split name into first and last name
-            const [firstName, lastName] = user_data["Name"].split(" ");
-            // create a variable for thier email address 
-            const emailAddress = `${firstName.toLowerCase()}.${lastName.toLowerCase()}@dreamfindershomes.com`;
+            displayResults(powershellScript, auditMacsForm, autoHotKeyScript);
 
-            // Determine which group is selected
-            const groupOption = document.querySelector('input[name="group_option"]:checked');
-                            if (!groupOption) {
-                                alert("Please select a group option.");
-                                return;
-                                }
+            downloadAHKFile(firstName, lastName);
+        }
+
+        function getInputText() {
+            return document.getElementById("input_text").value.trim();
+        }
+
+        function getUserPassword() {
+            return document.getElementById("user_password").value.trim();
+        }
+
+        function parseInputText(inputText) {
+            return inputText.split('\n').map(line => line.trim()).filter(line => line);
+        }
+
+        function extractUserData(lines) {
+            const fields = ["Name", "Phone", "Title", "Hiring Manager", "Department", "N/R", "Type", "Start Date", "Location", "ID"];
+            const userData = {};
+
+            for (let i = 0; i < fields.length; i++) {
+                userData[fields[i]] = lines[i].split(":")[1].trim().replace(/,$/, "");
+            }
             
-            
+            return userData;
+        }
 
-            // Generate PowerShell script
-            const powershellScript = `
+        function getFirstAndLastName(name) {
+            return name.split(" ");
+        }
+
+        function createEmailAddress(firstName, lastName) {
+            return `${firstName.toLowerCase()}.${lastName.toLowerCase()}@dreamfindershomes.com`;
+        }
+
+        function getSelectedGroupOption() {
+            return document.querySelector('input[name="group_option"]:checked');
+        }
+
+        function generatePowerShellScript(userData, firstName, lastName, emailAddress, userPassword) {
+    return `
 # 1. Create the user (without HomeDirectory/HomeDrive)
 New-ADUser \`
-    -Name "${user_data['Name']}" \`
+    -Name "${userData['Name']}" \`
     -GivenName "${firstName}" \`
     -Surname "${lastName}" \`
-    -DisplayName "${user_data['Name']}" \`
+    -DisplayName "${userData['Name']}" \`
     -UserPrincipalName "${emailAddress}" \`
-    -Description "${user_data['Title']}" \`
-    -Path "OU=${user_data['Location']},OU=Dream Finders Users,DC=dreamfinders,DC=local" \`
+    -Description "${userData['Title']}" \`
+    -Path "OU=${userData['Location']},OU=Dream Finders Users,DC=dreamfinders,DC=local" \`
     -Enabled $true \`
-    -AccountPassword (ConvertTo-SecureString "${user_password}" -AsPlainText -Force) \`
+    -AccountPassword (ConvertTo-SecureString "${userPassword}" -AsPlainText -Force) \`
     -PasswordNeverExpires $true \`
     -ChangePasswordAtLogon $false \`
     -SamAccountName "${firstName.toLowerCase()}.${lastName.toLowerCase()}" ;
@@ -257,98 +267,88 @@ Set-ADUser \`
     -HomeDrive "H:" \`
     -Add @{ProxyAddresses="SMTP:${emailAddress}"} \`
     -EmailAddress "${emailAddress}" \`
-    -Office "${user_data['Location']}" \`
-    -employeeID "${user_data['ID']}" ;
+    -Office "${userData['Location']}" \`
+    -employeeID "${userData['ID']}" ;
 
 # 4. Add to group
 Add-ADGroupMember -Identity "EntraID-MFA-Users" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
 Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
 `.trim();
-            // Shipping Address Mapping
+}
 
-                const shipAddress = {
-                        "Greenville": "1200 Woodruff Rd, Suite E1\nGreenville, SC 29607",
-                        "Charlotte": "301 McCullough Dr, Suite 109\nCharlotte, NC 28262",
-                        "Orlando": "8529 SOUTHPARK CIR, STE 130\nOrlando, FL 32819",
-                        "Raleigh": "7200 Falls of Neuse Rd, Suite 202\nRaleigh, NC 27615",
-                        "Fayetteville": "3709 Raeford Rd.\nFayetteville NC 28304",
-                        "Bluffton": "4454 Bluffton Park Crescent Suite 102\nBluffton, SC 29910",
-                        "Phoenix": "6929 East Greenway Parkway, Suite 102\nScottsdale, AZ 85254",
-                        "South Florida": "N/A\nN/A",
-                        "Wilmington": "1003 Olde Waterford way, 2G\nLeland, NC 28451",
-                        "Jacksonville": "14701 Phillips Hwy, Suite 300\nJacksonville, FL 32256"
-                        
-                        }; 
+function generateAuditMacsForm(userData, firstName, lastName, emailAddress, userPassword, groupOption) {
+    const shipAddress = {
+        "Greenville": "1200 Woodruff Rd, Suite E1\nGreenville, SC 29607",
+        "Charlotte": "301 McCullough Dr, Suite 109\nCharlotte, NC 28262",
+        "Orlando": "8529 SOUTHPARK CIR, STE 130\nOrlando, FL 32819",
+        "Raleigh": "7200 Falls of Neuse Rd, Suite 202\nRaleigh, NC 27615",
+        "Fayetteville": "3709 Raeford Rd.\nFayetteville NC 28304",
+        "Bluffton": "4454 Bluffton Park Crescent Suite 102\nBluffton, SC 29910",
+        "Phoenix": "6929 East Greenway Parkway, Suite 102\nScottsdale, AZ 85254",
+        "South Florida": "N/A\nN/A",
+        "Wilmington": "1003 Olde Waterford way, 2G\nLeland, NC 28451",
+        "Jacksonville": "14701 Phillips Hwy, Suite 300\nJacksonville, FL 32256"
+    };
 
-            // City Code Mapping
-                const cityCodeMap = {
-                        "Corporate": "1000-000",
-                        "Colorado": "1000-0026",
-                        "Jacksonville": "1000-0035",
-                        "Phoenix": "1000-0057",
-                        "Orlando": "1000-0067",
-                        "Capitol": "1000-0070",
-                        "South Florida Division": "1000-0072",
-                        "Southeast - Region": "1000-0073",
-                        "Tampa": "1000-0082",
-                        "Texas": "1000-0089",
-                        "Custom Homes": "1000-0100",
-                        "South Carolina/Georgia": "1200-000",
-                        "Active Adult": "1201-000",
-                        "Carolina Regional": "1202-000",
-                        "Fayetteville": "1202-0012",
-                        "Raleigh": "1202-0014",
-                        "Myrtle Beach": "1202-0015",
-                        "Wilmington": "1202-0016",
-                        "Charlotte": "1202-0018",
-                        "Coventry - Regional": "1203-000",
-                        "Houston": "1203-0091",
-                        "Dallas/Fort Worth": "1203-0092",
-                        "Austin": "1203-0093",
-                        "San Antonio": "1203-0094",
-                        "CH Regional": "1204-0000",
-                        "Greenville": "1204-0020",
-                        "Nashville": "1204-0021",
-                        "Charleston": "1204-0022",
-                        "Atlanta": "1210-0044",
-                        // each city is searched from the first term, it needs to match perfectly
-                    };
+    const cityCodeMap = {
+        "Corporate": "1000-000",
+        "Colorado": "1000-0026",
+        "Jacksonville": "1000-0035",
+        "Phoenix": "1000-0057",
+        "Orlando": "1000-0067",
+        "Capitol": "1000-0070",
+        "South Florida Division": "1000-0072",
+        "Southeast - Region": "1000-0073",
+        "Tampa": "1000-0082",
+        "Texas": "1000-0089",
+        "Custom Homes": "1000-0100",
+        "South Carolina/Georgia": "1200-000",
+        "Active Adult": "1201-000",
+        "Carolina Regional": "1202-000",
+        "Fayetteville": "1202-0012",
+        "Raleigh": "1202-0014",
+        "Myrtle Beach": "1202-0015",
+        "Wilmington": "1202-0016",
+        "Charlotte": "1202-0018",
+        "Coventry - Regional": "1203-000",
+        "Houston": "1203-0091",
+        "Dallas/Fort Worth": "1203-0092",
+        "Austin": "1203-0093",
+        "San Antonio": "1203-0094",
+        "CH Regional": "1204-0000",
+        "Greenville": "1204-0020",
+        "Nashville": "1204-0021",
+        "Charleston": "1204-0022",
+        "Atlanta": "1210-0044",
+    };
 
-        // Get the city code based on location
-            const location = user_data["Location"];
-            let cityCode = cityCodeMap[location] || "UNKNOWN"; // Defaults to UNKNOWN if the city is not found
+    const location = userData["Location"];
+    const cityCode = cityCodeMap[location] || "UNKNOWN";
 
-        // Extract the license type from the selected group (either "E1" or "E5")
-            let emailLicense = "";
-                
-            if (groupOption.value === "O365_E1_Users") 
-            {
-                emailLicense = "E1";
-            } 
-            else if (groupOption.value === "365 Lic-E5 Users") 
-            {
-                emailLicense = "E5";
-            }
+    let emailLicense = "";
+    if (groupOption.value === "O365_E1_Users") {
+        emailLicense = "E1";
+    } else if (groupOption.value === "365 Lic-E5 Users") {
+        emailLicense = "E5";
+    }
 
-        // Generate AuditMacs Form
-            const AuditMacsForm = 
-            `
+    return `
 Item Requested For: DFH
 
-Name: ${user_data['Name']}
+Name: ${userData['Name']}
 Email: ${emailAddress}
 Email License: ${emailLicense}
 PC/Citrix Username: ${firstName.toLowerCase()}.${lastName.toLowerCase()}
 
 ${shipAddress[location] || "Address not found"}
-ATTN: ${user_data['Hiring Manager']}
-Phone: ${user_data['Phone']}
+ATTN: ${userData['Hiring Manager']}
+Phone: ${userData['Phone']}
 
 DFH Ticket Number: 
 Request type: Onboarding
 Device Requested: Laptop
 Grade for devices: 
-Date Needed: ${user_data['Start Date']}
+Date Needed: ${userData['Start Date']}
 
 Division: ${cityCode} ${location}
 
@@ -362,13 +362,14 @@ Username: ${firstName.charAt(0).toLowerCase()}${lastName.toLowerCase()}
 Lasso
 Username: ${firstName.charAt(0).toLowerCase()}.${lastName.toLowerCase()}
 
-Password: ${user_password}
+Password: ${userPassword}
+`.trim();
+}
 
-            `.trim();
-
-            const autoHotKey = 
-`#Requires AutoHotkey v2.0
-^+g::
+function generateAutoHotKeyScript(userData, firstName, lastName, emailAddress, userPassword) {
+    return `
+#Requires AutoHotkey v2.0
+^+g:: 
 {
     ; NSE address book
     activeWindow := WinGetTitle("A")
@@ -377,7 +378,7 @@ Password: ${user_password}
         Send "u"
         Sleep 500
         Send "{Tab}"
-        SendText "${user_data['ID']}"
+        SendText "${userData['ID']}"
         Send "{Tab}"
         SendText "Michelle Murrhee  "
         Send "!o"
@@ -392,13 +393,12 @@ Password: ${user_password}
         Sleep 500
         Send "{TAB 11}"
         SendText "Employee"
-    }
-    else {
+    } else {
         MsgBox "Please open one of the supported service windows first."
         return
+    }
 }
-}
-^+u::
+^+u:: 
 {
     ; NSE UserAdmin
     activeWindow := WinGetTitle("A")
@@ -409,29 +409,27 @@ Password: ${user_password}
         Send "{F2}"
         Sleep 200
 
-        SendText "${user_password}"
+        SendText "${userPassword}"
         Send "{Tab}"
-        SendText "${user_password}"
+        SendText "${userPassword}"
         Send "{Enter}"
         Send "{Enter}"
         Sleep 200
         Send "{TAB 3}"
 
-        Send "${user_data['Phone']}"
+        Send "${userData['Phone']}"
         Send "{TAB 2}"
 
         Send "${emailAddress}"
         Send "{Tab}"
         Sleep 100
 
-
-    }
-    else {
+    } else {
         MsgBox "Please open one of the supported service windows first."
         return
+    }
 }
-}
-^+f::
+^+f:: 
 {
     ; Get the title of the active window
     activeWindow := WinGetTitle("A")
@@ -466,11 +464,11 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Password
-        SendText "${user_password}"
+        SendText "${userPassword}"
         Send "{Tab}"
         
         ; Confirm Password
-        SendText "${user_password}"
+        SendText "${userPassword}"
         Send "{Tab}"
         
         ; Default Email
@@ -489,18 +487,17 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Mobile Phone (same as phone)
-        Send "${user_data['Phone']}"
+        Send "${userData['Phone']}"
         Send "{Tab}"
         
         ; Skip Agent ID
         Send "{Tab}"
         
         ; Title
-        Send "${user_data['Title']}"
+        Send "${userData['Title']}"
         
         Sleep 500
-    }
-    else if InStr(activeWindow, "Cached Desktop - Desktop Viewer") {
+    } else if InStr(activeWindow, "Cached Desktop - Desktop Viewer") {
         ; Start in First Name field
         Send "${firstName}"
         Send "{Tab}"
@@ -513,7 +510,7 @@ Password: ${user_password}
         Send "{Tab 2}"
         
         ; City
-        Send "${location}"
+        Send "${userData['Location']}"
         Send "{Tab}"
         
         ; State
@@ -532,22 +529,22 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Home Phone (Location)
-        Send "${user_data['Location']}"
+        Send "${userData['Location']}"
         Send "{Tab}"
         
         ; Cell Phone
-        Send "${user_data['Phone']}"
+        Send "${userData['Phone']}"
         Send "{Tab}"
         
         ; Skip Pager
         Send "{Tab}"
         
         ; Fax
-        Send "${user_data['Title']}"
+        Send "${userData['Title']}"
         Send "{Tab}"
         
         ; SSN/SIN
-        Send "${user_data['ID']}"
+        Send "${userData['ID']}"
 
         
         ; Skip commission fields (5 tabs to User Type)
@@ -563,15 +560,14 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Password
-        SendText "${user_password}"
+        SendText "${userPassword}"
         Sleep 200
         Send "{Tab}"
         
         ; Confirm Password
-        SendText "${user_password}"
+        SendText "${userPassword}"
         Sleep 200
-    }
-    else if InStr(activeWindow, "BuildPro: User Detail") {
+    } else if InStr(activeWindow, "BuildPro: User Detail") {
         ; Username
         Send "${emailAddress}"
         Send "{Tab}"
@@ -585,11 +581,11 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Password
-        Send "${user_password}"
+        Send "${userPassword}"
         Send "{Tab}"
         
         ; Confirm Password
-        Send "${user_password}"
+        Send "${userPassword}"
         Send "{Tab}"
         
         ; Password Expiration - leave as 0
@@ -599,14 +595,14 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Title
-        Send "${user_data['Title']}"
+        Send "${userData['Title']}"
         Send "{Tab}"
         
         ; Skip User Status
         Send "{Tab}"
         
         ; Phone
-        Send "${user_data['Phone']}"
+        Send "${userData['Phone']}"
         Send "{Tab}"
         
         ; Skip Fax and send some phantom tab that buildpro has in their UI
@@ -629,7 +625,7 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; City
-        Send "${location}"
+        Send "${userData['Location']}"
         Send "{Tab}"
         
         ; State
@@ -641,11 +637,10 @@ Password: ${user_password}
         Send "{Tab}"
         
         Sleep 500
-    }
-        else if InStr(activeWindow, "Users | Admin | Docusign") {
+    } else if InStr(activeWindow, "Users | Admin | Docusign") {
         
         ; Full Name
-        Send "${user_data['Name']}"
+        Send "${userData['Name']}"
         Send "{Tab}"
         
         ; Email
@@ -655,8 +650,7 @@ Password: ${user_password}
         Send "{Enter}"  
         Sleep 2000
         
-    }
-    else if InStr(activeWindow, "Add User | Docusign") {
+    } else if InStr(activeWindow, "Add User | Docusign") {
         ; Email
         SendText "${emailAddress}"
         Send "{Tab}"
@@ -665,7 +659,7 @@ Password: ${user_password}
         Send "{Tab}"
         
         ; Full Name
-        SendText "${user_data['Name']}"
+        SendText "${userData['Name']}"
 
         ; Skip past
         Send "{Tab 10}"
@@ -685,28 +679,26 @@ Password: ${user_password}
         Send "D"
         Sleep 500
         Send "{Tab}"
-        Send "${location}"
+        Send "${userData['Location']}"
         Sleep 500
         
-    }
-    else {
+    } else {
         MsgBox "Please open one of the supported service windows first."
         return
     }
     
     Sleep 500
 }`.trim();
-            
-            // Display the results by changing style to block, making outputs seen by the user
-            document.getElementById("powershell_output").style.display = "block";
-            document.getElementById("form_output").style.display = "block";
-            document.getElementById("AHK_output").style.display = "block";
-            document.getElementById("powershell_script").textContent = powershellScript;
-            document.getElementById("audit_macs").textContent = AuditMacsForm;
-            document.getElementById("auto_hot_key").textContent = autoHotKey;
+}
 
-            downloadAHKFile(firstName, lastName);
-        }
+function displayResults(powershellScript, auditMacsForm, autoHotKeyScript) {
+    document.getElementById("powershell_output").style.display = "block";
+    document.getElementById("form_output").style.display = "block";
+    document.getElementById("AHK_output").style.display = "block";
+    document.getElementById("powershell_script").textContent = powershellScript;
+    document.getElementById("audit_macs").textContent = auditMacsForm;
+    document.getElementById("auto_hot_key").textContent = autoHotKeyScript;
+}
         // Download AHK file
         function downloadAHKFile(firstName, lastName) {
             const scriptContent = document.getElementById("auto_hot_key").textContent;
