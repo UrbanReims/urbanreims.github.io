@@ -113,6 +113,37 @@
             <label for="group_e5">E5 User</label>
         </div>
 
+        <br>
+
+        <div>
+            <label for="serviceOptions">Select a preset group:</label>
+            <select id="serviceOptions" onchange="selectPresetGroup()">
+                <option value="">Select...</option>
+                <option value="sales">Sales</option>
+                <option value="construction">Construction</option>
+            </select>
+        </div>
+
+        <div style="margin-top: 10px;">
+            <label>Select Services:</label>
+            <br>
+            <input type="checkbox" id="service1" name="service" value="Service1">
+            <label for="service1">Service1</label>
+            <br>
+            <input type="checkbox" id="service2" name="service" value="Service2">
+            <label for="service2">Service2</label>
+            <br>
+            <input type="checkbox" id="service3" name="service" value="Service3">
+            <label for="service3">Service3</label>
+            <br>
+            <input type="checkbox" id="service4" name="service" value="Service4">
+            <label for="service4">Service4</label>
+            <br>
+            <input type="checkbox" id="service5" name="service" value="Service5">
+            <label for="service5">Service5</label>
+            <br>
+        </div>
+
         <br>        
 
         <button onclick="generateScripts()">Generate Scripts</button>
@@ -167,6 +198,13 @@
             const inputText = getInputText();
             const userPassword = getUserPassword();
             const lines = parseInputText(inputText);
+            const selectedServices = [];
+
+            document.querySelectorAll('input[name="service"]:checked').forEach((checkbox) => {
+                    selectedServices.push(checkbox.value);
+                });
+
+                console.log('Selected Services:', selectedServices);
 
             if (lines.length < 6) {
                 alert("Please enter complete user information.");
@@ -276,7 +314,7 @@ Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastNam
 `.trim();
 }
 
-function generateAuditMacsForm(userData, firstName, lastName, emailAddress, userPassword, groupOption) {
+        function generateAuditMacsForm(userData, firstName, lastName, emailAddress, userPassword, groupOption) {
     const shipAddress = {
         "Greenville": "1200 Woodruff Rd, Suite E1\nGreenville, SC 29607",
         "Charlotte": "301 McCullough Dr, Suite 109\nCharlotte, NC 28262",
@@ -366,7 +404,7 @@ Password: ${userPassword}
 `.trim();
 }
 
-function generateAutoHotKeyScript(userData, firstName, lastName, emailAddress, userPassword) {
+        function generateAutoHotKeyScript(userData, firstName, lastName, emailAddress, userPassword) {
     return `
 #Requires AutoHotkey v2.0
 ^+g:: 
@@ -691,7 +729,26 @@ function generateAutoHotKeyScript(userData, firstName, lastName, emailAddress, u
 }`.trim();
 }
 
-function displayResults(powershellScript, auditMacsForm, autoHotKeyScript) {
+        function selectPresetGroup() {
+
+    const serviceOptions = document.getElementById('serviceOptions').value;
+
+    const services = ['service1', 'service2', 'service3', 'service4', 'service5'];
+    services.forEach(service => {
+        document.getElementById(service).checked = false;
+    });
+
+    if (serviceOptions === 'sales') {
+        document.getElementById('service1').checked = true;
+        document.getElementById('service2').checked = true;
+    } else if (serviceOptions === 'construction') {
+        document.getElementById('service3').checked = true;
+        document.getElementById('service4').checked = true;
+        document.getElementById('service5').checked = true;
+    }
+}
+
+        function displayResults(powershellScript, auditMacsForm, autoHotKeyScript) {
     document.getElementById("powershell_output").style.display = "block";
     document.getElementById("form_output").style.display = "block";
     document.getElementById("AHK_output").style.display = "block";
