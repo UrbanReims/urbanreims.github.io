@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Tyler Reimer">
-    <title>IT Onboarding v0.36</title>
+    <title>IT Onboarding v0.37</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .container { width: 90%; max-width: 1200px; margin: 0 auto; }
@@ -309,8 +309,7 @@ Set-ADUser \`
     -employeeID "${userData['ID']}" ;
 
 # 4. Add to group
-Add-ADGroupMember -Identity "EntraID-MFA-Users" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}" \`
-Add-ADGroupMember -Identity "DUO" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
+Add-ADGroupMember -Identity "EntraID-MFA-Users" -Members "${firstName.toLowerCase()}.${lastName.toLowerCase()}"
 `.trim();
 }
 
