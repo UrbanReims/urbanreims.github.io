@@ -25,7 +25,7 @@
 
         /* Light mode variables */
         .light-mode {
-            --bg-color: #f5f5f5;
+            --bg-color: #333;
             --text-color: #333;
             --border-color: #ddd;
             --output-bg: #fff;
@@ -85,9 +85,8 @@
 <body>
     <div class="container">
         <h1>IT Onboarding</h1>
-        <button class="theme-toggle" onclick="toggleTheme()">Switch to Light Mode</button><br>
         <!-- Input for onboarding text -->
-            <label for="input_text">Paste the unformatted text here:</label><br>
+            <label for="input_text"></label><br>
         <p>"Name":<br> 
             "Phone": <br> 
             "Title": <br> 
@@ -173,26 +172,6 @@
     </div>
 
     <script>
-    //DARK MODE
-         // pull local storage for theme preference
-         const currentTheme = localStorage.getItem("theme") || "dark";
-        document.body.classList.toggle("light-mode", currentTheme === "light");
-
-        // update button text based on the initial theme
-        const themeToggleButton = document.querySelector(".theme-toggle");
-        themeToggleButton.textContent = currentTheme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode";
-
-        function toggleTheme() {
-            // actual toggle
-            document.body.classList.toggle("light-mode");
-            const isLightMode = document.body.classList.contains("light-mode");
-
-            // update the button text accordingly
-            themeToggleButton.textContent = isLightMode ? "Switch to Dark Mode" : "Switch to Light Mode";
-
-            // save the theme preference in local storage
-            localStorage.setItem("theme", isLightMode ? "light" : "dark");
-        }
         //TEXT PARSING
         function generateScripts() {
             const inputText = getInputText();
